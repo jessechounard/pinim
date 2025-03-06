@@ -1,5 +1,5 @@
 // The original version comes from the youtube link below. It's only
-// modified to work the OpenGL 3.3 that I'm using.
+// modified to work the version of OpenGL that I'm using.
 // You should go watch that video. It's awesome!
 
 #version 410

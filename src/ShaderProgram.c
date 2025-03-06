@@ -438,7 +438,7 @@ bool ShaderProgram_SetParameterFloat3(
     value->type = parameter->type;
     value->f[0] = parameterValue[0];
     value->f[1] = parameterValue[1];
-    value->f[2] = parameterValue[3];
+    value->f[2] = parameterValue[2];
 
     return true;
 }
