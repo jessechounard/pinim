@@ -1,8 +1,8 @@
 #include <assert.h>
+#include <glad/gl.h>
 #include <SDL3/SDL.h>
 
 #include "GraphicsDevice.h"
-#include "IncludeOpenGL.h"
 #include "ShaderProgram.h"
 #include "VertexBuffer.h"
 

@@ -1,7 +1,7 @@
 #include <assert.h>
+#include <glad/gl.h>
 #include <SDL3/SDL.h>
 
-#include "IncludeOpenGL.h"
 #include "ShaderProgram.h"
 
 typedef enum ShaderParameterType {

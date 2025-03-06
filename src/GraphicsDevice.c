@@ -1,9 +1,9 @@
 #include <assert.h>
 
+#include <glad/gl.h>
 #include <SDL3/SDL.h>
 
 #include "GraphicsDevice.h"
-#include "IncludeOpenGL.h"
 #include "ShaderProgram.h"
 #include "VertexBuffer.h"
 
@@ -28,8 +28,8 @@ uint32_t GraphicsDevice_PrepareSDLWindowAttributes(GraphicsAPI api) {
     switch (api) {
     case GRAPHICS_API_OPENGL:
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -69,13 +69,11 @@ GraphicsDevice *GraphicsDevice_Create(
         break;
     }
 
-#if defined(GL_DESKTOP)
     if (!gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress)) {
         SDL_Log("gladLoadGL failed");
         SDL_free(graphicsDevice);
         return NULL;
     }
-#endif
 
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);

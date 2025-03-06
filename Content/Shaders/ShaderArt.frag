@@ -2,7 +2,9 @@
 // modified to work the OpenGL 3.3 that I'm using.
 // You should go watch that video. It's awesome!
 
-varying vec2 v_texcoord;
+#version 410
+in vec2 v_texcoord;
+out vec4 fragColor;
 
 uniform vec2 iResolution;
 uniform float iTime;
@@ -45,5 +47,5 @@ void main() {
         finalColor += col * d;
     }
         
-    gl_FragColor = vec4(finalColor, 1.0);
+    fragColor = vec4(finalColor, 1.0);
 }

@@ -42,12 +42,13 @@ void CreateOrthographicOffCenterMatrix(float left, float right, float bottom, fl
 
 char defaultVertexShaderSource[] =
     // input from CPU
-    "attribute vec4 position;\n"
-    "attribute vec4 color;\n"
-    "attribute vec2 texcoord;\n"
+    "#version 410\n"
+    "in vec4 position;\n"
+    "in vec4 color;\n"
+    "in vec2 texcoord;\n"
     // output to fragment shader
-    "varying vec4 v_color;\n"
-    "varying vec2 v_texcoord;\n"
+    "out vec4 v_color;\n"
+    "out vec2 v_texcoord;\n"
     // custom input from program
     "uniform mat4 ProjectionMatrix;\n"
     //
@@ -60,15 +61,17 @@ char defaultVertexShaderSource[] =
 
 char defaultFragmentShaderSource[] =
     // input from vertex shader
-    "varying vec4 v_color;\n"
-    //"varying vec2 v_texcoord;\n"
+    "#version 410\n"
+    "in vec4 v_color;\n"
+    //"in vec2 v_texcoord;\n"
+    "out vec4 fragColor;\n"
     // custom input from program
     //"uniform sampler2D TextureSampler;\n"
     //
     "void main()\n"
     "{\n"
-    //"	gl_FragColor = texture2D(TextureSampler, v_texcoord) * v_color;\n"
-    "	gl_FragColor = v_color;\n"
+    //"	fragColor = texture2D(TextureSampler, v_texcoord) * v_color;\n"
+    "	fragColor = v_color;\n"
     "}\n";
 
 SDL_AppResult SDL_AppIterate(void *state) {
@@ -147,7 +150,6 @@ SDL_AppResult SDL_AppInit(void **state, int argc, char *argv[]) {
     context->window = SDL_CreateWindow("test", WINDOW_WIDTH, WINDOW_HEIGHT, windowFlags);
     if (context->window == NULL) {
         SDL_Log("SDL_CreateWindow failed");
-        SDL_free(context);
         return SDL_APP_FAILURE;
     }
 
@@ -157,8 +159,6 @@ SDL_AppResult SDL_AppInit(void **state, int argc, char *argv[]) {
         GraphicsDevice_Create(GRAPHICS_API_OPENGL, context->window, VERTICAL_SYNC_ADAPTIVE);
     if (context->graphicsDevice == NULL) {
         SDL_Log("GraphicsDevice_Create failed");
-        SDL_DestroyWindow(context->window);
-        SDL_free(context);
         return SDL_APP_FAILURE;
     }
 
@@ -166,9 +166,6 @@ SDL_AppResult SDL_AppInit(void **state, int argc, char *argv[]) {
         context->graphicsDevice, defaultVertexShaderSource, SDL_strlen(defaultVertexShaderSource));
     if (vertexShader == NULL) {
         SDL_Log("VertexShader_CreateFromBuffer failed");
-        GraphicsDevice_Destroy(context->graphicsDevice);
-        SDL_DestroyWindow(context->window);
-        SDL_free(context);
         return SDL_APP_FAILURE;
     }
 
@@ -177,9 +174,6 @@ SDL_AppResult SDL_AppInit(void **state, int argc, char *argv[]) {
     if (fragmentShader == NULL) {
         SDL_Log("FragmentShader_CreateFromBuffer failed");
         VertexShader_Destroy(vertexShader);
-        GraphicsDevice_Destroy(context->graphicsDevice);
-        SDL_DestroyWindow(context->window);
-        SDL_free(context);
         return SDL_APP_FAILURE;
     }
 
@@ -189,9 +183,6 @@ SDL_AppResult SDL_AppInit(void **state, int argc, char *argv[]) {
         SDL_Log("ShaderProgram_Create failed");
         FragmentShader_Destroy(fragmentShader);
         VertexShader_Destroy(vertexShader);
-        GraphicsDevice_Destroy(context->graphicsDevice);
-        SDL_DestroyWindow(context->window);
-        SDL_free(context);
         return SDL_APP_FAILURE;
     }
 
@@ -201,10 +192,7 @@ SDL_AppResult SDL_AppInit(void **state, int argc, char *argv[]) {
     context->vertexBuffer = VertexBuffer_Create(VERTEX_BUFFER_DYNAMIC, 4096);
     if (context->vertexBuffer == NULL) {
         SDL_Log("VertexBuffer_Create failed");
-        ShaderProgram_Destroy(context->shaderProgram);
-        GraphicsDevice_Destroy(context->graphicsDevice);
-        SDL_DestroyWindow(context->window);
-        SDL_free(context);
+        return SDL_APP_FAILURE;
     }
 
     return SDL_APP_CONTINUE;
