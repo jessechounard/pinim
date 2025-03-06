@@ -8,5 +8,6 @@ zig 0.14.0 (or higher)
 Instructions:  
 ```
 git clone https://github.com/jessechounard/pinim.git
+cd pinim
 zig build run
 ```
