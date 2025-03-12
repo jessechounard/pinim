@@ -2,7 +2,8 @@
 #include <glad/gl.h>
 #include <SDL3/SDL.h>
 
-#include "ShaderProgram.h"
+#include <ShaderProgram.h>
+#include <Texture.h>
 
 typedef enum ShaderParameterType {
     SHADER_PARAMETER_INVALID = 0,
@@ -346,6 +347,31 @@ int ShaderProgram_FindParameterIndex(ShaderProgram *shaderProgram, char *paramet
     return -1;
 }
 
+bool ShaderProgram_SetParameterTexture2D(
+    ShaderProgram *shaderProgram, char *parameterName, Texture *texture, int slotNumber) {
+    assert(shaderProgram != NULL);
+    assert(parameterName != NULL);
+    assert(texture != NULL);
+
+    int index = ShaderProgram_FindParameterIndex(shaderProgram, parameterName);
+    if (index == -1) {
+        return false;
+    }
+
+    ShaderDetail *parameter = &shaderProgram->parameters[index];
+    ShaderParameterValue *value = &shaderProgram->parameterValues[index];
+
+    if (parameter->type != SHADER_PARAMETER_TEXTURE2D) {
+        return false;
+    }
+
+    value->type = parameter->type;
+    value->slot = slotNumber;
+    value->textureId = Texture_GetTextureId(texture);
+
+    return true;
+}
+
 bool ShaderProgram_SetParameterMatrix4(
     ShaderProgram *shaderProgram, char *parameterName, float parameterValue[16]) {
     assert(shaderProgram != NULL);
@@ -593,7 +619,6 @@ void ShaderProgram_ApplyParameters(ShaderProgram *shaderProgram) {
             glUniformMatrix4fv(parameter->location, 1, GL_FALSE, &parameterValue->matrix[0]);
             break;
         case SHADER_PARAMETER_FLOAT:
-
             glUniform1f(parameter->location, parameterValue->f[0]);
             break;
         case SHADER_PARAMETER_FLOAT_VEC2:

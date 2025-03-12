@@ -3,9 +3,10 @@
 #include <glad/gl.h>
 #include <SDL3/SDL.h>
 
-#include "GraphicsDevice.h"
-#include "ShaderProgram.h"
-#include "VertexBuffer.h"
+#include <GraphicsDevice.h>
+#include <ShaderProgram.h>
+#include <Texture.h>
+#include <VertexBuffer.h>
 
 struct GraphicsDevice {
     Rectangle viewport;
@@ -112,12 +113,30 @@ void GraphicsDevice_Destroy(GraphicsDevice *device) {
 }
 
 void GraphicsDevice_SetViewport(GraphicsDevice *graphicsDevice, Rectangle *viewport) {
+    assert(graphicsDevice != NULL);
+    assert(viewport != NULL);
+
     graphicsDevice->viewport = *viewport;
     glViewport(viewport->x, viewport->y, viewport->width, viewport->height);
 }
 
 void GraphicsDevice_GetViewport(GraphicsDevice *graphicsDevice, Rectangle *viewport) {
+    assert(graphicsDevice != NULL);
+    assert(viewport != NULL);
+
     *viewport = graphicsDevice->viewport;
+}
+
+uint32_t GraphicsDevice_GetWindowWidth(GraphicsDevice *graphicsDevice) {
+    assert(graphicsDevice != NULL);
+
+    return graphicsDevice->windowWidth;
+}
+
+uint32_t GraphicsDevice_GetWindowHeight(GraphicsDevice *graphicsDevice) {
+    assert(graphicsDevice != NULL);
+
+    return graphicsDevice->windowHeight;
 }
 
 void GraphicsDevice_ClearScreen(GraphicsDevice *graphicsDevice, Color *color) {
@@ -195,6 +214,39 @@ void GraphicsDevice_DisableScissorsRectangle(GraphicsDevice *graphicsDevice) {
     graphicsDevice->scissorsEnabled = false;
 }
 
+void GraphicsDevice_BindRenderTarget(
+    GraphicsDevice *graphicsDevice, Texture *renderTarget, bool setViewport) {
+    assert(graphicsDevice != NULL);
+    assert(renderTarget != NULL);
+    assert(Texture_GetTextureType(renderTarget) == TEXTURE_TYPE_RENDERTARGET);
+
+    graphicsDevice->currentFramebufferObject = Texture_GetFramebufferId(renderTarget);
+    glBindFramebuffer(GL_FRAMEBUFFER, graphicsDevice->currentFramebufferObject);
+
+    if (setViewport) {
+        GraphicsDevice_SetViewport(graphicsDevice,
+            &(Rectangle){.x = 0,
+                .y = 0,
+                .width = Texture_GetWidth(renderTarget),
+                .height = Texture_GetHeight(renderTarget)});
+    }
+}
+
+void GraphicsDevice_UnbindRenderTarget(GraphicsDevice *graphicsDevice, bool resetViewport) {
+    assert(graphicsDevice != NULL);
+
+    graphicsDevice->currentFramebufferObject = graphicsDevice->defaultFramebufferObject;
+    glBindFramebuffer(GL_FRAMEBUFFER, graphicsDevice->defaultFramebufferObject);
+
+    if (resetViewport) {
+        GraphicsDevice_SetViewport(graphicsDevice,
+            &(Rectangle){.x = 0,
+                .y = 0,
+                .width = GraphicsDevice_GetWindowWidth(graphicsDevice),
+                .height = GraphicsDevice_GetWindowHeight(graphicsDevice)});
+    }
+}
+
 bool GraphicsDevice_IsUsingRenderTarget(GraphicsDevice *graphicsDevice) {
     assert(graphicsDevice != NULL);
 
@@ -239,7 +291,7 @@ void GraphicsDevice_DrawPrimitives(GraphicsDevice *graphicsDevice, VertexBuffer 
     GLenum mode;
 
     switch (primitiveType) {
-    case RENDER_PRIMITIVE_TRAINGLES:
+    case RENDER_PRIMITIVE_TRIANGLES:
         vertexCount = primitiveCount * 3;
         mode = GL_TRIANGLES;
         break;

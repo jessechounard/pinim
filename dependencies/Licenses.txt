@@ -1,0 +1,9 @@
+glad - Multi-Language Vulkan/GL/GLES/EGL/GLX/WGL Loader
+	Generated with the glad 2 webservice, v2.0.6
+	https://gen.glad.sh/
+	License: MIT
+
+stb_image - image loader
+	Downloaded from github on 3/4/2024, v2.29
+	https://github.com/nothings/stb/blob/master/stb_image.h
+	License: Public Domain / MIT

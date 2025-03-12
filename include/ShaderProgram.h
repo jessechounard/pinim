@@ -1,10 +1,7 @@
 #pragma once
 
 #include "GraphicsDevice.h"
-
-typedef struct VertexShader VertexShader;
-typedef struct FragmentShader FragmentShader;
-typedef struct ShaderProgram ShaderProgram;
+#include "Types.h"
 
 VertexShader *VertexShader_Create(GraphicsDevice *graphicsDevice, char *fileName);
 
@@ -24,8 +21,8 @@ ShaderProgram *ShaderProgram_Create(
     GraphicsDevice *graphicsDevice, VertexShader *vertexShader, FragmentShader *fragmentShader);
 void ShaderProgram_Destroy(ShaderProgram *shaderProgram);
 
-// bool ShaderProgram_SetParameterTexture2D(ShaderProgram *shaderProgram, Texture *texture, int
-// slotNumber);
+bool ShaderProgram_SetParameterTexture2D(
+    ShaderProgram *shaderProgram, char *parameterName, Texture *texture, int32_t slotNumber);
 
 bool ShaderProgram_SetParameterMatrix4(
     ShaderProgram *shaderProgram, char *parameterName, float parameterValue[16]);

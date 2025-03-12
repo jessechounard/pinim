@@ -9,14 +9,17 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-    exe.addIncludePath(b.path("src/dependencies"));
+    exe.addIncludePath(b.path("dependencies"));
+    exe.addIncludePath(b.path("include"));
     exe.addCSourceFiles(.{
         .files = &.{
-            "src/dependencies/glad/gl.c",
-            "src/GraphicsDevice.c",
-            "src/main.c",
-            "src/ShaderProgram.c",
-            "src/VertexBuffer.c",
+            "dependencies/glad/gl.c",
+            "source/graphics/BatchRenderer.c",
+            "source/graphics/GraphicsDevice.c",
+            "source/graphics/ShaderProgram.c",
+            "source/graphics/Texture.c",
+            "source/graphics/VertexBuffer.c",
+            "source/main.c",
         },
         .flags = &.{
             "-Wall",

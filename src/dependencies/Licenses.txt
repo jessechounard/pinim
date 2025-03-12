@@ -1,5 +1,0 @@
-glad - Multi-Language Vulkan/GL/GLES/EGL/GLX/WGL Loader
-	Generated with the glad 2 webservice, v2.0.6
-	https://gen.glad.sh/
-	Added an implementation file following the header instructions.
-	License: MIT
